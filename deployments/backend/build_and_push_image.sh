@@ -2,7 +2,7 @@
 # -------- CONFIG --------
 DOCKERHUB_USER="prerana1205"
 IMAGE_NAME="recolor-api"
-VERSION="v1"
+VERSION="v4"
 
 # -------- DERIVED --------
 IMAGE_URI="${DOCKERHUB_USER}/${IMAGE_NAME}:${VERSION}"

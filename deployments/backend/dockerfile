@@ -8,11 +8,13 @@ RUN apt-get update
 WORKDIR /app
 
 # ---------- Copy application code ----------
-COPY inference/* .
+COPY inference/ .
     
 # ---------- Install Python deps ----------
 RUN pip install --no-cache-dir -r requirements.txt
 
+
+RUN echo "=== Files in /app ===" && ls -lah /app
 # ---------- Expose port ----------
 EXPOSE 8000
 

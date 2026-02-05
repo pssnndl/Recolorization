@@ -11,7 +11,7 @@ from model import get_model
 # -----------------------------
 def load_model(model_path: str, device: str = "cpu"):
     model = get_model().to(device)
-    checkpoint = torch.load(model_path, map_location=device)
+    checkpoint = torch.load(model_path, map_location=device, weights_only=True)
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
     return model
