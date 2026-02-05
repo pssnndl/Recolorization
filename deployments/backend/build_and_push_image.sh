@@ -2,7 +2,7 @@
 # -------- CONFIG --------
 DOCKERHUB_USER="prerana1205"
 IMAGE_NAME="recolor-api"
-VERSION="v4"
+VERSION="v5"
 
 # -------- DERIVED --------
 IMAGE_URI="${DOCKERHUB_USER}/${IMAGE_NAME}:${VERSION}"
@@ -13,7 +13,8 @@ BUILD_DIR="."
 
 # -------- BUILD --------
 echo "🐳 Building image: ${IMAGE_URI}"
-docker build -t "${IMAGE_URI}" "${BUILD_DIR}"
+
+docker build --platform linux/amd64 -t "${IMAGE_URI}" "${BUILD_DIR}" 
 
 # -------- PUSH --------
 echo "🚀 Pushing image to Docker Hub"

@@ -11,6 +11,7 @@ WORKDIR /app
 COPY inference/ .
     
 # ---------- Install Python deps ----------
+RUN pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
 
@@ -19,4 +20,4 @@ RUN echo "=== Files in /app ===" && ls -lah /app
 EXPOSE 8000
 
 # ---------- Run server ----------
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
