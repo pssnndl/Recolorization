@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 
-const API_ENDPOINT = "http://0.0.0.0:8000/recolor"; // 🔁 swap this
+const API_ENDPOINT = "https://recolor-api.onrender.com/recolor"; // 🔁 swap this
 
 const PRESET_PALETTES = [
   { name: "Sunset", colors: ["#FF6B6B","#FF8E53","#FFC300","#FF5733","#C70039","#900C3F"] },
