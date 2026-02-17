@@ -13,3 +13,8 @@ datasets/sample
 **/*ckpts*
 **/wandb
 **/*.pt
+
+/deployments/frontend/node_modules
+/deployments/inference/__pycache__
+
+*.DS_Store

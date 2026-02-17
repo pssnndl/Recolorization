@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel
 from PIL import Image
@@ -14,6 +15,16 @@ MODEL_PATH = "checkpoint/checkpoint_epoch_90.pt"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with specific origins!!
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 model = load_model(MODEL_PATH, DEVICE)
 
 
