@@ -83,7 +83,7 @@ function DropZone({ onFile }) {
       onDrop={e=>{e.preventDefault();setDrag(false);handle(e.dataTransfer.files[0]);}}
       onClick={()=>ref.current.click()}
       style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
-        gap:10,borderRadius:16,height:170,cursor:"pointer",transition:"all 0.2s",
+        gap:10,borderRadius:16,height:300,cursor:"pointer",transition:"all 0.2s",
         border:`2px dashed ${drag?"#E1D9BC":"#ACBAC4"}`,
         background:drag?"rgba(225,217,188,0.15)":"transparent"}}>
       <span style={{fontSize:44,opacity:0.55}}>🖼️</span>
@@ -174,8 +174,8 @@ export default function ImageRecolor() {
           <div style={card}>
             <span style={lbl}>1 · Upload Image</span>
             {preview ? (
-              <div style={{position:"relative",borderRadius:12,overflow:"hidden",border:"1px solid #ACBAC4",display:"flex",justifyContent:"center",background:"rgba(0,0,0,0.2)"}}>
-                <img src={preview} alt="original" style={{maxWidth:"100%",maxHeight:400,objectFit:"contain",display:"block"}}/>
+              <div style={{position:"relative",borderRadius:12,overflow:"auto",border:"1px solid #ACBAC4",display:"flex",justifyContent:"center",alignItems:"center",background:"rgba(0,0,0,0.2)",height:300}}>
+                <img src={preview} alt="original" style={{maxWidth:"100%",maxHeight:"100%",objectFit:"contain",display:"block"}}/>
                 <button onClick={()=>{setImgFile(null);setImgB64(null);setPreview(null);setResult(null);}}
                   style={{position:"absolute",top:8,right:8,background:"#30364F",border:"none",
                     color:"#F0F0DB",borderRadius:"50%",width:26,height:26,cursor:"pointer",fontSize:13}}>✕</button>
@@ -313,8 +313,8 @@ export default function ImageRecolor() {
             <span style={lbl}>Result</span>
             {result ? (
               <div style={{display:"flex",flexDirection:"column",gap:12}}>
-                <div style={{borderRadius:12,overflow:"hidden",border:"1px solid #ACBAC4",display:"flex",justifyContent:"center",background:"rgba(0,0,0,0.2)"}}>
-                  <img src={result} alt="recolored" style={{maxWidth:"100%",maxHeight:400,display:"block",objectFit:"contain"}}/>
+                <div style={{borderRadius:12,overflow:"auto",border:"1px solid #ACBAC4",display:"flex",justifyContent:"center",alignItems:"center",background:"rgba(0,0,0,0.2)",height:300}}>
+                  <img src={result} alt="recolored" style={{maxWidth:"100%",maxHeight:"100%",display:"block",objectFit:"contain"}}/>
                 </div>
                 <a href={result} download="recolored.png" style={{
                   display:"block",textAlign:"center",padding:"10px 0",borderRadius:12,
@@ -325,7 +325,7 @@ export default function ImageRecolor() {
               </div>
             ) : (
               <div style={{display:"flex",flexDirection:"column",alignItems:"center",
-                justifyContent:"center",minHeight:180,gap:10,color:"#ACBAC4"}}>
+                justifyContent:"center",height:300,gap:10,color:"#ACBAC4"}}>
                 <span style={{fontSize:46}}>🎨</span>
                 <p style={{margin:0,fontSize:13}}>Recolored image will appear here</p>
               </div>
