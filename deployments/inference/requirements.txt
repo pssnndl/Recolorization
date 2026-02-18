@@ -1,4 +1,0 @@
-scikit-image==0.24.0
-uvicorn
-fastapi
-pydantic

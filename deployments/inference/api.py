@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel
 import os
@@ -15,6 +16,20 @@ MODEL_PATH = "checkpoint/checkpoint_epoch_90.pt"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://recolorization.vercel.app",
+        # "http://localhost:5173",
+        # "http://localhost:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 model = load_model(MODEL_PATH, DEVICE)
 
 
