@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
+import os
 from PIL import Image
 import base64
 import io
@@ -21,6 +22,16 @@ class RecolorRequest(BaseModel):
     image_base64: str
     palette: list[list[int]]
 
+
+@app.get("/health")
+def health():
+    port = os.environ.get("PORT")
+    return {
+        "status": "ok",
+        "port_set": port is not None,
+        "port_numeric": port.isdigit() if port is not None else False,
+        "port": port
+    }
 
 @app.post("/recolor")
 def recolor(req: RecolorRequest):
