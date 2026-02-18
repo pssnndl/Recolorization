@@ -20,7 +20,7 @@ def load_model(model_path: str, device: str = "cpu"):
 # -----------------------------
 # Preprocessing
 # -----------------------------
-def preprocess_image(image: Image.Image, max_dim: int = 350):
+def preprocess_image(image: Image.Image, max_dim: int = 150):
     h, w = image.size
     if h > w:
         new_h = max_dim
