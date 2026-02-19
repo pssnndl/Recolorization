@@ -8,8 +8,8 @@ import os
 import torch
 from PIL import Image
 from langchain_core.messages import AIMessage
-
-from ..tools.palette_utils import palette_to_hex
+sys.path.append("../")
+from tools.palette_utils import palette_to_hex
 
 # Add inference directory to path so we can import infer.py
 _INFERENCE_DIR = os.path.join(os.path.dirname(__file__), "..", "..")
@@ -34,7 +34,7 @@ def _get_model():
 def recolor_agent(state: dict) -> dict:
     image_b64 = state.get("image_b64")
     palette = state.get("palette")
-
+    print(f"[INFO] recolor_agent running")
     if not image_b64:
         return {
             "next_node": "respond",

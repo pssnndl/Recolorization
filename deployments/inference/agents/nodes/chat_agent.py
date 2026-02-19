@@ -2,8 +2,9 @@
 
 from langchain_ollama import ChatOllama
 from langchain_core.messages import SystemMessage, HumanMessage
-
-from ..tools.palette_utils import palette_display
+import sys
+sys.path.insert(0, "../")
+from tools.palette_utils import palette_display
 
 SYSTEM_PROMPT = """You are a creative recolorization assistant. You help users recolor images by guiding them through:
 1. Uploading a source image
@@ -54,8 +55,8 @@ MAX_CONTEXT_MESSAGES = 20
 
 
 def chat_agent(state: dict) -> dict:
-    llm = ChatOllama(model="llama3", temperature=0.7, num_predict=512)
-    intent_llm = ChatOllama(model="llama3", temperature=0.0, num_predict=64)
+    llm = ChatOllama(model="llama3.1:8b", temperature=0.7, num_predict=512)
+    intent_llm = ChatOllama(model="llama3.1:8b", temperature=0.0, num_predict=64)
 
     has_image = state.get("image_b64") is not None
     has_palette = (

@@ -4,7 +4,7 @@ import time
 import uuid
 from typing import Optional
 
-from .state import RecolorState
+from state import RecolorState
 
 # Session store
 _sessions: dict[str, RecolorState] = {}

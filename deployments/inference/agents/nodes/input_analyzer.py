@@ -1,6 +1,8 @@
-"""Input Analyzer — deterministic slot validation that overrides LLM routing."""
+"""Input Analyzer — deterministic slot validation that sets routing.
 
-from langchain_core.messages import AIMessage
+Messages flow from chat_agent through state automatically.
+This node only decides which agents to dispatch (next_nodes).
+"""
 
 
 def input_analyzer(state: dict) -> dict:
@@ -19,7 +21,6 @@ def input_analyzer(state: dict) -> dict:
     )
 
     execution_plan = []
-    messages = []
 
     # --- Image Intent ---
     if "upload_image" in intents:
@@ -37,31 +38,13 @@ def input_analyzer(state: dict) -> dict:
 
     # --- Recolor Intent ---
     if "recolor" in intents:
-
-        # both slots ready → recolor directly
         if has_image and has_palette:
             execution_plan.append("recolor_agent")
-
         else:
-            # missing slots → schedule required agents
             if not has_image:
                 execution_plan.append("image_agent")
-                messages.append(
-                    AIMessage(
-                        content="I'd love to recolor that — please upload an image first!"
-                    )
-                )
-
             if not has_palette:
                 execution_plan.append("palette_agent")
-                messages.append(
-                    AIMessage(
-                        content=(
-                            "Almost ready! I just need a 6-color palette. "
-                            "Describe a mood or I can suggest one."
-                        )
-                    )
-                )
 
     # --- Nothing actionable ---
     if not execution_plan:
@@ -70,7 +53,4 @@ def input_analyzer(state: dict) -> dict:
     # Remove duplicates while preserving order
     execution_plan = list(dict.fromkeys(execution_plan))
 
-    return {
-        "next_nodes": execution_plan,
-        "messages": messages if messages else None,
-    }
+    return {"next_nodes": execution_plan}

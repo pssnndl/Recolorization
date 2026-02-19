@@ -1,5 +1,10 @@
-from typing import TypedDict, Optional
+from typing import Annotated, TypedDict, Optional
 from langgraph.graph import MessagesState
+
+
+def _keep_last(left: Optional[str], right: Optional[str]) -> Optional[str]:
+    """Reducer: keep the latest value, preferring non-None."""
+    return right if right is not None else left
 
 
 class PaletteCandidate(TypedDict):
@@ -32,8 +37,8 @@ class RecolorState(MessagesState):
     result_b64: Optional[str]
     recolor_count: int
 
-    # Error tracking
-    error: Optional[str]
+    # Error tracking (reducer allows parallel agents to both write)
+    error: Annotated[Optional[str], _keep_last]
 
     # Session metadata
     session_id: str

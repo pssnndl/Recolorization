@@ -7,13 +7,15 @@ from langchain_core.messages import AIMessage, ToolMessage, SystemMessage, Human
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
+import sys
 
-from ..state import PaletteCandidate
-from ..tools.colormind import fetch_palette
-from ..tools.palette_utils import (
+sys.path.insert(0, "../")
+from state import PaletteCandidate
+from tools.colormind import fetch_palette
+from tools.palette_utils import (
     palette_to_hex,
 )
-from ..tools.palette_formation import extract_colors_from_image, generate_palette_from_description, get_random_palette, parse_user_colors, create_palette_variation
+from tools.palette_formation import extract_colors_from_image, generate_palette_from_description, get_random_palette, parse_user_colors, create_palette_variation
 
 
 
