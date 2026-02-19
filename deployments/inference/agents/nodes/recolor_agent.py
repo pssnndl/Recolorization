@@ -8,6 +8,7 @@ import os
 import torch
 from PIL import Image
 from langchain_core.messages import AIMessage
+from langsmith import traceable
 sys.path.append("../")
 from tools.palette_utils import palette_to_hex
 
@@ -30,7 +31,7 @@ def _get_model():
         _model = load_model(model_path, _device)
     return _model, _device
 
-
+@traceable(run_type="chain", name="recolor_agent")
 def recolor_agent(state: dict) -> dict:
     image_b64 = state.get("image_b64")
     palette = state.get("palette")

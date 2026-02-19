@@ -2,6 +2,7 @@
 
 from langchain_ollama import ChatOllama
 from langchain_core.messages import SystemMessage, HumanMessage
+from langsmith import traceable
 import sys
 sys.path.insert(0, "../")
 from tools.palette_utils import palette_display
@@ -54,6 +55,7 @@ VALID_INTENTS = {
 MAX_CONTEXT_MESSAGES = 20
 
 
+@traceable(run_type="llm", name="chat_interface")
 def chat_agent(state: dict) -> dict:
     llm = ChatOllama(model="llama3.1:8b", temperature=0.7, num_predict=512)
     intent_llm = ChatOllama(model="llama3.1:8b", temperature=0.0, num_predict=64)

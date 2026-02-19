@@ -5,11 +5,14 @@ import io
 
 from PIL import Image
 from langchain_core.messages import AIMessage
+from langsmith import traceable
+
 
 MAX_IMAGE_SIZE_MB = 10
 SUPPORTED_FORMATS = {"JPEG", "PNG", "WEBP", "BMP", "TIFF"}
 
 
+@traceable(run_type="chain", name="image_agent")
 def image_agent(state: dict) -> dict:
     """
     Validates the image in state. Images arrive as base64 set by the

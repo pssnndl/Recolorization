@@ -7,6 +7,7 @@ from langchain_core.messages import AIMessage, ToolMessage, SystemMessage, Human
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
+from langsmith import traceable
 import sys
 
 sys.path.insert(0, "../")
@@ -64,7 +65,7 @@ def build_palette_agent():
     agent = graph.compile()
     return agent
 
-
+@traceable(run_type="chain", name="palette_interface")
 def palette_agent(state: dict) -> dict:
     """Outer-graph node: invokes the palette sub-graph and parses results."""
     last_msg = state["messages"][-1].content if state["messages"] else ""

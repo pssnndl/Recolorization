@@ -1,5 +1,11 @@
 """LangGraph state machine — assembles all nodes and edges."""
 
+import os
+from dotenv import load_dotenv
+
+# Load .env before any langchain/langsmith imports so tracing env vars are set
+load_dotenv(".env")
+
 from langgraph.graph import START, StateGraph, END
 
 from state import RecolorState
