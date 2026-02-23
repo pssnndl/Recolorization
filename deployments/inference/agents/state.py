@@ -30,8 +30,10 @@ class RecolorState(MessagesState):
 
     # Routing
     next_nodes: list[str]
-    next_node: Optional[str]  # used by join_slots / recolor_agent for single-step routing
+    next_node: Optional[str]  # used by slot_checker for routing decisions
 
+    # Loop control
+    chat_iterations: int  # incremented each time chat_agent runs; caps the loop
 
     # Recolor results
     result_b64: Optional[str]
