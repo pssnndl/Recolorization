@@ -1,40 +1,73 @@
 """Conditional edge routing functions for the LangGraph state machine."""
 
+import logging
+
 from langgraph.types import Send
 
-# Maps intent labels to agent node names (for Send() context)
-_INTENT_TO_AGENT: dict[str, str] = {
-    "upload_image":     "image_agent",
-    "set_palette":      "palette_agent",
-    "describe_palette": "palette_agent",
-    "extract_palette":  "palette_agent",
-    "variation":        "palette_agent",
-    "adjust_palette":   "palette_agent",
-}
+logger = logging.getLogger("routing")
+
+# Maximum times chat_agent may run before the graph force-terminates.
+MAX_CHAT_ITERATIONS = 20
+
+
+
+def _iteration_limit_reached(state: dict) -> bool:
+    """Check whether chat_iterations has exceeded the cap."""
+    return state.get("chat_iterations", 0) >= MAX_CHAT_ITERATIONS
 
 
 def route_after_analyzer(state: dict) -> str | list:
     """
     Routes after input_analyzer.
-    - Single agent: returns the node name string.
-    - Multiple agents: returns Send() objects for parallel fan-out.
+    - "chat_agent"   : no actionable intent → loop back (interrupt waits for input)
+    - "__end__"      : iteration limit reached → terminate graph
+    - "slot_checker" : recolor shortcut (both slots already filled)
+    - single agent   : "image_agent" or "palette_agent"
+    - list[Send]     : parallel fan-out for multiple agents
     """
-    next_nodes = state.get("next_nodes", ["respond"])
+    next_nodes = state.get("next_nodes", ["chat_agent"])
 
     if len(next_nodes) == 1:
-        return next_nodes[0]
+        target = next_nodes[0]
 
-    # Multi-agent: fan out via Send(), passing user_intent per agent
-    intents = state.get("user_intents", [])
+        # If looping back, check iteration limit first
+        if target == "chat_agent" and _iteration_limit_reached(state):
+            logger.warning(
+                "Iteration limit (%d) reached at route_after_analyzer — ending graph",
+                MAX_CHAT_ITERATIONS,
+            )
+            return "__end__"
+
+        logger.info("route_after_analyzer → %s", target)
+        return target
+
+    # Multi-agent: fan out via Send()
     sends = []
     for node in next_nodes:
-        agent_intent = next(
-            (i for i in intents if _INTENT_TO_AGENT.get(i) == node), None
-        )
-        sends.append(Send(node, {**state, "user_intent": agent_intent}))
+        sends.append(Send(node, {**state}))
+
+    logger.info(
+        "route_after_analyzer → parallel fan-out: %s",
+        [s.node for s in sends],
+    )
     return sends
 
 
-def route_after_join(state: dict) -> str:
-    """Routes after join_slots based on slot completeness."""
-    return state.get("next_node", "respond")
+def route_after_slot_check(state: dict) -> str:
+    """
+    Routes after slot_checker based on slot completeness.
+    - "recolor_agent" : both image and palette ready
+    - "chat_agent"    : incomplete → loop back for more input
+    - "__end__"       : incomplete but iteration limit reached
+    """
+    target = state.get("next_node", "chat_agent")
+
+    if target == "chat_agent" and _iteration_limit_reached(state):
+        logger.warning(
+            "Iteration limit (%d) reached at route_after_slot_check — ending graph",
+            MAX_CHAT_ITERATIONS,
+        )
+        return "__end__"
+
+    logger.info("route_after_slot_check → %s", target)
+    return target
