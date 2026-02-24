@@ -5,7 +5,7 @@ import re
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage
 
-from .color_extraction import extract_colorthief, extract_pylette
+from .color_extraction import extract_colorthief
 from .colormind import fetch_palette, fetch_palette_with_seed
 from .palette_utils import parse_colors_from_text, generate_variation
 
@@ -56,33 +56,15 @@ def _palette_from_llm(
     return None
 
 
-def extract_colors_from_image(image_b64) -> str:
-        """Extract dominant colors from the user's uploaded image."""
-        logger.info("extract_colors_from_image called | image present: %s", bool(image_b64))
-        if not image_b64:
-            logger.warning("No image data provided")
-            return "Error: No image uploaded yet."
-        results = []
-        ct = extract_colorthief(image_b64)
-        if ct:
-            results.append({"colors": ct, "source": "colorthief"})
-            logger.info("colorthief extraction succeeded: %d colors", len(ct))
-        else:
-            logger.warning("colorthief extraction failed")
-        py = extract_pylette(image_b64)
-        if py:
-            results.append({"colors": py, "source": "pylette"})
-            logger.info("pylette extraction succeeded: %d colors", len(py))
-        else:
-            logger.warning("pylette extraction failed")
-        logger.info("extract_colors_from_image returning %d result(s)", len(results))
-        return json.dumps(results) if results else "Could not extract colors."
 
-
-def generate_palette_from_description(description: str, current_palette) -> str:
-        """Generate a 6-color palette from a natural language description like 'warm sunset' or 'ocean blues'."""
+def generate_palette_from_description(description: str, current_palette: str = "") -> str:
+        """Generate a 6-color palette from a text description like 'warm sunset', 'ocean blues', 'rainbow', 'neon', 'forest'. Pass the description of the desired colors/mood/theme."""
         logger.info("generate_palette_from_description called | description: '%s'", description[:80])
-        colors = _palette_from_llm(description, current_palette)
+        # current_palette comes as string from tool calling; convert if needed
+        parsed_palette = None
+        if current_palette and isinstance(current_palette, (list,)):
+            parsed_palette = current_palette
+        colors = _palette_from_llm(description, parsed_palette)
         if colors:
             logger.info("Palette generated from description successfully")
             return json.dumps(colors)
@@ -124,8 +106,8 @@ def parse_user_colors(text: str) -> str:
         return json.dumps(padded[:6])
 
 
-def create_palette_variation(variation_type: str, current_palette) -> str:
-    """Create a variation of the current palette. variation_type: subtle, bold, warmer, cooler, complementary, saturated, desaturated."""
+def create_palette_variation(variation_type: str, current_palette: list[list[int]] = None) -> str:
+    """Create a variation of an existing palette. variation_type must be one of: subtle, bold, warmer, cooler, complementary, saturated, desaturated."""
     logger.info("create_palette_variation called | type: '%s', has_palette: %s", variation_type, bool(current_palette))
     if not current_palette:
         logger.warning("No current palette to create variation from")

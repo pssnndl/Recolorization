@@ -18,7 +18,7 @@ from tools.colormind import fetch_palette
 from tools.palette_utils import (
     palette_to_hex,
 )
-from tools.palette_formation import extract_colors_from_image, generate_palette_from_description, get_random_palette, parse_user_colors, create_palette_variation
+from tools.palette_formation import generate_palette_from_description, get_random_palette, parse_user_colors, create_palette_variation
 
 logger = logging.getLogger("palette_agent")
 
@@ -78,19 +78,27 @@ class PaletteAgentOutput(BaseModel):
 
 
 
-PALETTE_SYSTEM = """You are a palette creation assistant. You have tools to create color palettes.
+PALETTE_SYSTEM = """You are a palette creation assistant. Your ONLY job is to call tools — NEVER respond with plain text.
 
-Pick the right tool based on what the user asks:
-- User describes a mood/theme → generate_palette_from_description
-- User gives hex codes or RGB values → parse_user_colors
-- User wants colors from their image → extract_colors_from_image
-- User wants a random palette → get_random_palette
-- User wants to tweak existing palette → create_palette_variation
+RULES:
+1. You MUST call exactly one tool for every user message.
+2. Do NOT write explanations. Just call the tool.
 
-Call the appropriate tool. You may call multiple tools to give the user options."""
+TOOL SELECTION — pick based on the user message:
+
+| User says…                              | Tool to call                          |
+|----------------------------------------|---------------------------------------|
+| Describes a mood, theme, or colors     | generate_palette_from_description     |
+| (e.g. "warm", "ocean", "rainbow",     |                                       |
+|  "sunset", "forest", "neon", etc.)     |                                       |
+| Gives hex codes like #FF6B6B           | parse_user_colors                     |
+| Gives RGB values like (255, 100, 50)   | parse_user_colors                     |
+| Says "random" or "surprise me"         | get_random_palette                    |
+| Wants to adjust/tweak current palette  | create_palette_variation              |
+
+When in doubt, use generate_palette_from_description — it handles any text description."""
 
 TOOLS = [
-        extract_colors_from_image,
         generate_palette_from_description,
         get_random_palette,
         parse_user_colors,
